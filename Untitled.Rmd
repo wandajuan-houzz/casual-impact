@@ -1,28 +1,48 @@
 ---
-title: "test"
+title: "Causal Inference on Listing level price test"
 output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set()
 ```
 
-## R Markdown
+## T1
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r}
+library(CausalImpact)
+library(zoo)
 
-```{r cars}
-summary(cars)
+##########################################################
+# Experiment overall analysis
+##########################################################
+
+####### T1 ######
+# GMV 
+gmv_t1 <- read.csv("weekly_pv_gmv_t1.csv", sep = ',',header = TRUE)
+gmv_t1 <- gmv_t1[order(gmv_t1$period, decreasing=TRUE), ]
+gmv_t1 <- gmv_t1[order(gmv_t1$week), ]
+#head(gmv_t1)
+#dim(gmv_t1)
+
+# Construct control and test gmv_t1
+gmv_t1[,1] <- as.Date(gmv_t1[,1],  format="%Y-%m-%d")
+#head(gmv_t1)
+
+# Define date 
+times=as.Date(gmv_t1[,1])
+pre.period <- c(min(which(gmv_t1$period=='pre')), max(which(gmv_t1$period=='pre')))
+post.period <- c(min(which(gmv_t1$period=='post')), max(which(gmv_t1$period=='post')))
+
+
+X = gmv_t1[, 3:8, 10]
+y = gmv_t1[, 9]
+# gmv_t1 is (test, control, date)
+fit_gmv_t1=zoo(cbind(y, X),times)
+# Model fit
+impact <- CausalImpact(fit_gmv_t1,times[pre.period] , times[post.period])
+summary(impact)
+summary(impact, "report")
+plot(impact)
 ```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
