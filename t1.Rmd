@@ -1,0 +1,74 @@
+---
+title: "Causal Impact Analysis on Listing Level Pricing Test"
+output: github_notebook
+---
+
+
+```{r}
+library(CausalImpact)
+library(zoo)
+
+##########################################################
+# Experiment overall analysis
+##########################################################
+
+####### T1 ######
+# GMV 
+gmv_t1 <- read.csv("weekly_pv_gmv_t1.csv", sep = ',',header = TRUE)
+gmv_t1 <- gmv_t1[order(gmv_t1$period, decreasing=TRUE), ]
+gmv_t1 <- gmv_t1[order(gmv_t1$week), ]
+#head(gmv_t1)
+#dim(gmv_t1)
+
+# Construct control and test gmv_t1
+gmv_t1[,1] <- as.Date(gmv_t1[,1],  format="%Y-%m-%d")
+#head(gmv_t1)
+
+# Define date 
+times=as.Date(gmv_t1[,1])
+pre.period <- c(min(which(gmv_t1$period=='pre')), max(which(gmv_t1$period=='pre')))
+post.period <- c(min(which(gmv_t1$period=='post')), max(which(gmv_t1$period=='post')))
+
+
+X = gmv_t1[, 3:8, 10]
+y = gmv_t1[, 9]
+# gmv_t1 is (test, control, date)
+fit_gmv_t1=zoo(cbind(y, X),times)
+# Model fit
+impact <- CausalImpact(fit_gmv_t1,times[pre.period] , times[post.period])
+summary(impact)
+summary(impact, "report")
+plot(impact)
+```
+
+```{r}
+####### T1 ######
+# CM
+cm_t1 <- read.csv("weekly_pv_cm_t1.csv", sep = ',',header = TRUE)
+cm_t1 <- cm_t1[order(cm_t1$period, decreasing=TRUE), ]
+cm_t1 <- cm_t1[order(cm_t1$week), ]
+#head(cm_t1)
+#dim(cm_t1)
+
+# Construct control and test cm_t1
+cm_t1[,1] <- as.Date(cm_t1[,1],  format="%Y-%m-%d")
+head(cm_t1)
+
+# Define date 
+times=as.Date(cm_t1[,1])
+pre.period <- c(min(which(cm_t1$period=='pre')), max(which(cm_t1$period=='pre')))
+post.period <- c(min(which(cm_t1$period=='post')), max(which(cm_t1$period=='post')))
+
+
+X = cm_t1[, 3:8, 10]
+y = cm_t1[, 9]
+# cm_t1 is (test, control, date)
+fit_cm_t1=zoo(cbind(y, X),times)
+# Model fit
+impact <- CausalImpact(fit_cm_t1,times[pre.period] , times[post.period])
+
+summary(impact)
+summary(impact, "report")
+plot(impact)
+```
+
