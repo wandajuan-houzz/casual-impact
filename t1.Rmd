@@ -1,6 +1,8 @@
 ---
 title: "Causal Impact Analysis on Listing Level Pricing Test"
-output: github_notebook
+output:
+  pdf_document: default
+  html_notebook: default
 ---
 
 
