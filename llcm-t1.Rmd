@@ -1,15 +1,13 @@
 ---
 title: "Causal Inference Analysis - LLCM T1"
-output:
-  html_document: default
-  pdf_document: default
+output: html_notebook
 ---
 
 #### to view the knitted HTML in github, use the following url
-https://htmlpreview.github.io/?https://github.com/wandajuan-houzz/casual-impact/blob/master/llcm-t1.html
+https://htmlpreview.github.io/?https://github.com/wandajuan-houzz/casual-impact/blob/master/llcm-t1.nb.html
 
 
-#### Test ON: 2021-10-22 ~ 2021-12-
+#### Test ON: 2021-10-22 ~ 2021-12-02
 
 
 
@@ -24,7 +22,7 @@ library(zoo)
 ##########################################################
 
 ####### T1 ######
-# GMV 
+###### GMV ###### 
 gmv_t1 <- read.csv("weekly_pv_gmv_t1.csv", sep = ',',header = TRUE)
 gmv_t1 <- gmv_t1[order(gmv_t1$period, decreasing=TRUE), ]
 gmv_t1 <- gmv_t1[order(gmv_t1$week), ]
@@ -40,7 +38,7 @@ pre.period <- c(min(which(gmv_t1$period=='pre')), max(which(gmv_t1$period=='pre'
 post.period <- c(min(which(gmv_t1$period=='post')), max(which(gmv_t1$period=='post')))
 
 
-X = gmv_t1[, 3:8, 10]
+X = gmv_t1[, c(3:8, 10)]
 y = gmv_t1[, 9]
 # gmv_t1 is (test, control, date)
 fit_gmv_t1=zoo(cbind(y, X),times)
@@ -53,7 +51,7 @@ plot(impact)
 
 ```{r}
 ####### T1 ######
-# CM
+####### CM #####
 cm_t1 <- read.csv("weekly_pv_cm_t1.csv", sep = ',',header = TRUE)
 cm_t1 <- cm_t1[order(cm_t1$period, decreasing=TRUE), ]
 cm_t1 <- cm_t1[order(cm_t1$week), ]
@@ -70,7 +68,7 @@ pre.period <- c(min(which(cm_t1$period=='pre')), max(which(cm_t1$period=='pre'))
 post.period <- c(min(which(cm_t1$period=='post')), max(which(cm_t1$period=='post')))
 
 
-X = cm_t1[, 3:8, 10]
+X = cm_t1[, c(3:8, 10)]
 y = cm_t1[, 9]
 # cm_t1 is (test, control, date)
 fit_cm_t1=zoo(cbind(y, X),times)
@@ -81,4 +79,3 @@ summary(impact)
 summary(impact, "report")
 plot(impact)
 ```
-
