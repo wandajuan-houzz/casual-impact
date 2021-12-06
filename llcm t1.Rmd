@@ -1,6 +1,24 @@
+---
+title: "Causal Inference Analysis - LLCM T1"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+#### to view the knitted HTML in github, use the following url
+https://htmlpreview.github.io/?https://github.com/wandajuan-houzz/casual-impact/blob/master/llcm-t1.html
+
+
+#### Test ON: 2021-10-22 ~ 2021-12-
+
+
+
+```{r echo = T, message = FALSE}
 library(CausalImpact)
 library(zoo)
+```
 
+```{r}
 ##########################################################
 # Experiment overall analysis
 ##########################################################
@@ -10,12 +28,11 @@ library(zoo)
 gmv_t1 <- read.csv("weekly_pv_gmv_t1.csv", sep = ',',header = TRUE)
 gmv_t1 <- gmv_t1[order(gmv_t1$period, decreasing=TRUE), ]
 gmv_t1 <- gmv_t1[order(gmv_t1$week), ]
-head(gmv_t1)
-dim(gmv_t1)
+#head(gmv_t1)
+#dim(gmv_t1)
 
 # Construct control and test gmv_t1
 gmv_t1[,1] <- as.Date(gmv_t1[,1],  format="%Y-%m-%d")
-head(gmv_t1)
 
 # Define date 
 times=as.Date(gmv_t1[,1])
@@ -29,17 +46,19 @@ y = gmv_t1[, 9]
 fit_gmv_t1=zoo(cbind(y, X),times)
 # Model fit
 impact <- CausalImpact(fit_gmv_t1,times[pre.period] , times[post.period])
-plot(impact)
 summary(impact)
 summary(impact, "report")
+plot(impact)
+```
 
+```{r}
 ####### T1 ######
 # CM
 cm_t1 <- read.csv("weekly_pv_cm_t1.csv", sep = ',',header = TRUE)
 cm_t1 <- cm_t1[order(cm_t1$period, decreasing=TRUE), ]
 cm_t1 <- cm_t1[order(cm_t1$week), ]
-head(cm_t1)
-dim(cm_t1)
+#head(cm_t1)
+#dim(cm_t1)
 
 # Construct control and test cm_t1
 cm_t1[,1] <- as.Date(cm_t1[,1],  format="%Y-%m-%d")
@@ -57,6 +76,9 @@ y = cm_t1[, 9]
 fit_cm_t1=zoo(cbind(y, X),times)
 # Model fit
 impact <- CausalImpact(fit_cm_t1,times[pre.period] , times[post.period])
-plot(impact)
+
 summary(impact)
 summary(impact, "report")
+plot(impact)
+```
+

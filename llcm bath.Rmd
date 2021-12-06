@@ -1,17 +1,25 @@
 ---
-title: "Causal Impact Analysis on Listing Level Pricing Test"
+title: "R Notebook"
 output:
   html_document:
     df_print: paged
-  html_notebook: default
-  pdf_document: default
 ---
 
 
-```{r}
+#### to view the knitted HTML in github, use the following url
+https://htmlpreview.github.io/?https://github.com/wandajuan-houzz/casual-impact/blob/master/llcm-t1.html
+
+
+#### Test ON: 2021-10-22 ~ 2021-12-
+
+
+
+```{r echo = T, message = FALSE}
 library(CausalImpact)
 library(zoo)
+```
 
+```{r}
 ##########################################################
 # Experiment overall analysis
 ##########################################################
@@ -26,7 +34,6 @@ gmv_t1 <- gmv_t1[order(gmv_t1$week), ]
 
 # Construct control and test gmv_t1
 gmv_t1[,1] <- as.Date(gmv_t1[,1],  format="%Y-%m-%d")
-#head(gmv_t1)
 
 # Define date 
 times=as.Date(gmv_t1[,1])
@@ -75,4 +82,3 @@ summary(impact)
 summary(impact, "report")
 plot(impact)
 ```
-
