@@ -1,0 +1,80 @@
+---
+title: "Causal Inference Analysis - LLCM Dining Tables"
+output: html_notebook
+---
+
+#### to view the knitted HTML in github, use the following url
+https://htmlpreview.github.io/?https://github.com/wandajuan-houzz/casual-impact/blob/master/llcm-dining.nb.html
+
+
+#### Test ON: 2021-11-17 ~ 2021-12-09
+
+```{r echo = T, message = FALSE}
+library(CausalImpact)
+library(zoo)
+```
+
+```{r echo=T}
+##########################################################
+# Experiment overall analysis
+##########################################################
+
+####### dining ######
+###### GMV ###### 
+gmv_dining <- read.csv("~/Google Drive/202109 listing level target:floor margin/casual impact/weekly_pv_gmv_dining_1209.csv", sep = ',',header = TRUE)
+gmv_dining <- gmv_dining[order(gmv_dining$period, decreasing=TRUE), ]
+gmv_dining <- gmv_dining[order(gmv_dining$week), ]
+head(gmv_dining)
+#dim(gmv_dining)
+
+# Construct control and test gmv_dining
+gmv_dining[,1] <- as.Date(gmv_dining[,1],  format="%Y-%m-%d")
+
+# Define date 
+times=as.Date(gmv_dining[,1])
+pre.period <- c(min(which(gmv_dining$period=='pre')), max(which(gmv_dining$period=='pre')))
+post.period <- c(min(which(gmv_dining$period=='post')), max(which(gmv_dining$period=='post')))
+# colnames(gmv_dining)
+
+
+X = gmv_dining[, 3:5]
+y = gmv_dining[, 6]
+# gmv_dining is (test, control, date)
+fit_gmv_dining=zoo(cbind(y, X),times)
+# Model fit
+impact <- CausalImpact(fit_gmv_dining,times[pre.period] , times[post.period])
+summary(impact)
+summary(impact, "report")
+plot(impact)
+```
+
+```{r}
+####### dining ######
+####### CM #####
+cm_dining <- read.csv("~/Google Drive/202109 listing level target:floor margin/casual impact/weekly_pv_cm_dining_1209.csv", sep = ',',header = TRUE)
+cm_dining <- cm_dining[order(cm_dining$period, decreasing=TRUE), ]
+cm_dining <- cm_dining[order(cm_dining$week), ]
+#head(cm_dining)
+#dim(cm_dining)
+
+# Construct control and test cm_dining
+cm_dining[,1] <- as.Date(cm_dining[,1],  format="%Y-%m-%d")
+head(cm_dining)
+
+# Define date 
+times=as.Date(cm_dining[,1])
+pre.period <- c(min(which(cm_dining$period=='pre')), max(which(cm_dining$period=='pre')))
+post.period <- c(min(which(cm_dining$period=='post')), max(which(cm_dining$period=='post')))
+
+
+X = cm_dining[, 3:5]
+y = cm_dining[, 6]
+# cm_dining is (test, control, date)
+fit_cm_dining=zoo(cbind(y, X),times)
+# Model fit
+impact <- CausalImpact(fit_cm_dining,times[pre.period] , times[post.period])
+
+summary(impact)
+summary(impact, "report")
+plot(impact)
+```

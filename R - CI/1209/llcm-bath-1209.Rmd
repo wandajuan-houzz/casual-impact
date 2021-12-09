@@ -1,0 +1,82 @@
+---
+title: "Causal Inference Analysis - LLCM Bath vanities"
+output: html_notebook
+---
+
+#### to view the knitted HTML in github, use the following url
+https://htmlpreview.github.io/?https://github.com/wandajuan-houzz/casual-impact/blob/master/llcm-bath.nb.html
+
+
+#### Test ON: 2021-10-22 ~ 2021-12-09
+
+
+
+```{r echo = T, message = FALSE}
+library(CausalImpact)
+library(zoo)
+```
+
+```{r echo=T}
+##########################################################
+# Experiment overall analysis
+##########################################################
+
+####### Bath ######
+###### GMV ###### 
+gmv_bath <- read.csv("~/Google Drive/202109 listing level target:floor margin/casual impact/weekly_pv_gmv_bath_1209.csv", sep = ',',header = TRUE)
+gmv_bath <- gmv_bath[order(gmv_bath$period, decreasing=TRUE), ]
+gmv_bath <- gmv_bath[order(gmv_bath$week), ]
+#head(gmv_bath)
+#dim(gmv_bath)
+
+# Construct control and test gmv_bath
+gmv_bath[,1] <- as.Date(gmv_bath[,1],  format="%Y-%m-%d")
+
+# Define date 
+times=as.Date(gmv_bath[,1])
+pre.period <- c(min(which(gmv_bath$period=='pre')), max(which(gmv_bath$period=='pre')))
+post.period <- c(min(which(gmv_bath$period=='post')), max(which(gmv_bath$period=='post')))
+# colnames(gmv_bath)
+
+
+X = gmv_bath[, c(3:18, 20:24)]
+y = gmv_bath[, 19]
+# gmv_bath is (test, control, date)
+fit_gmv_bath=zoo(cbind(y, X),times)
+# Model fit
+impact <- CausalImpact(fit_gmv_bath,times[pre.period] , times[post.period])
+summary(impact)
+summary(impact, "report")
+plot(impact)
+```
+
+```{r}
+####### bath ######
+####### CM #####
+cm_bath <- read.csv("~/Google Drive/202109 listing level target:floor margin/casual impact/weekly_pv_cm_bath_1209.csv", sep = ',',header = TRUE)
+cm_bath <- cm_bath[order(cm_bath$period, decreasing=TRUE), ]
+cm_bath <- cm_bath[order(cm_bath$week), ]
+#head(cm_bath)
+#dim(cm_bath)
+
+# Construct control and test cm_bath
+cm_bath[,1] <- as.Date(cm_bath[,1],  format="%Y-%m-%d")
+head(cm_bath)
+
+# Define date 
+times=as.Date(cm_bath[,1])
+pre.period <- c(min(which(cm_bath$period=='pre')), max(which(cm_bath$period=='pre')))
+post.period <- c(min(which(cm_bath$period=='post')), max(which(cm_bath$period=='post')))
+
+
+X = cm_bath[, c(3:18, 20:24)]
+y = cm_bath[, 19]
+# cm_bath is (test, control, date)
+fit_cm_bath=zoo(cbind(y, X),times)
+# Model fit
+impact <- CausalImpact(fit_cm_bath,times[pre.period] , times[post.period])
+
+summary(impact)
+summary(impact, "report")
+plot(impact)
+```
